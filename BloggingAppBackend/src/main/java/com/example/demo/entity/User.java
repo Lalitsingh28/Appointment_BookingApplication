@@ -18,6 +18,9 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,15 +33,19 @@ public class User {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
+	private int userId;
 
-	@Column(name = "user_name", nullable = false, length = 100)
+	@Column(name = "user_name", length = 100)
+	@NotBlank
 	private String name;
 
 	@Column(unique = true)
+	@Email(message = "Invalid Email")
 	private String email;
 
+	@Size(min = 6,message = "Minimum 6 character required")
 	private String password;
+	
 	private String about;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
