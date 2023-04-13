@@ -13,14 +13,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@NoArgsConstructor
+@Table(name = "posts")
 @Data
+@NoArgsConstructor
 public class Post {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer postId;
@@ -45,6 +47,5 @@ public class Post {
 	
 	@OneToMany(mappedBy = "post",cascade = CascadeType.ALL)
 	private Set<Comment> comments=new HashSet<>();
-
 
 }

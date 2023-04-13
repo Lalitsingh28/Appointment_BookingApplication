@@ -7,8 +7,6 @@ import com.example.demo.payload.UserDTO;
 public interface UserService {
 	
 	public UserDTO registerNewUser(UserDTO user);
-	
-	public UserDTO createUser(UserDTO user);
 
 	public UserDTO updateUser(UserDTO user, Integer userId);
 	
@@ -16,6 +14,6 @@ public interface UserService {
 
 	public UserDTO getUserById(Integer userId);
 
-	public void deleteUser(Integer userId);
+	public String deleteUser(Integer userId);
 
 }
