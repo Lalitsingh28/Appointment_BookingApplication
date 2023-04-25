@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.User;
@@ -21,6 +22,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	
 	public UserDTO userToDto(User user) {
@@ -31,6 +35,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDTO registerNewUser(User user) {
 
+		 user.setPassword(passwordEncoder.encode(user.getPassword()));
 		 User savedUser = userRepo.save(user);
 		 UserDTO userDto = userToDto(savedUser);
 		 return userDto;

@@ -17,75 +17,65 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.config.CustomUser;
 import com.example.demo.entity.User;
+import com.example.demo.exception.UserException;
+import com.example.demo.payload.JwtAuthRequest;
+import com.example.demo.payload.JwtAuthResponse;
 import com.example.demo.payload.UserDTO;
 import com.example.demo.repository.UserRepo;
 import com.example.demo.security.JwtUtils;
-import com.example.demo.service.UserService;
-
-import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/auth/")
+@RequestMapping("/auth")
 public class AuthController {
+	
+	@Autowired
+	private UserRepo userRepo;
+	
+	@Autowired
+	private ModelMapper mapper;
 
 	@Autowired
-	private JwtUtils jwtTokenHelper;
+	  private JwtUtils jwtUtils;
 
 	@Autowired
-	private UserDetailsService userDetailsService;
+	private CustomUser userDetailsService;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
-	@Autowired
-	private UserService userService;
 
 	@PostMapping("/login")
 	public ResponseEntity<JwtAuthResponse> createToken(@RequestBody JwtAuthRequest request) throws Exception {
-		this.authenticate(request.getUsername(), request.getPassword());
-		UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
-		String token = this.jwtTokenHelper.generateTokenFromUsername(userDetails.getUsername());
+		authenticate(request.getUsername(), request.getPassword());
+		UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+		String token = jwtUtils.generateJwtToken(userDetails);
 
 		JwtAuthResponse response = new JwtAuthResponse();
 		response.setToken(token);
-		response.setUser(this.mapper.map((User) userDetails, UserDto.class));
+		response.setUser(mapper.map(userDetails, UserDTO.class));
 		return new ResponseEntity<JwtAuthResponse>(response, HttpStatus.OK);
 	}
 
 	private void authenticate(String username, String password) throws Exception {
 
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,
-				password);
-
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
 		try {
-
-			this.authenticationManager.authenticate(authenticationToken);
-
-		} catch (BadCredentialsException e) {
+			authenticationManager.authenticate(authenticationToken);
+		}catch(BadCredentialsException e) {
 			System.out.println("Invalid Detials !!");
-			throw new ApiException("Invalid username or password !!");
+			throw new UserException("Invalid username or password !!");
 		}
 
 	}
 
-	// register new user api
-
-	@PostMapping("/register")
-	public ResponseEntity<UserDTO> registerUser(@Valid @RequestBody User user) {
-		UserDTO registeredUser = userService.registerNewUser(user);
-		return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
-	}
-
 	// get loggedin user data
-	@Autowired
-	private UserRepo userRepo;
-	@Autowired
-	private ModelMapper mapper;
 
-	@GetMapping("/current-user/")
-	public ResponseEntity<User> getUser(Principal principal) {
+	@GetMapping("/currentUser")
+	public ResponseEntity<UserDTO> getUser(Principal principal) {
 		User user = this.userRepo.findByEmail(principal.getName());
-		return new ResponseEntity<>(user, HttpStatus.OK);
+		return new ResponseEntity<UserDTO>(this.mapper.map(user, UserDTO.class), HttpStatus.OK);
 	}
+
 }

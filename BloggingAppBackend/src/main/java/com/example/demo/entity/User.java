@@ -34,6 +34,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class User implements UserDetails{
+	
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -60,40 +62,35 @@ public class User implements UserDetails{
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		Collection < ? extends GrantedAuthority> mapRoles = roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
-        return mapRoles;
+		List<SimpleGrantedAuthority> authories = this.roles.stream()
+				.map((role) -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
+		return authories;
 	}
 
 	@Override
 	public String getUsername() {
-		// TODO Auto-generated method stub
-		return email;
+		return this.email;
 	}
 
 	@Override
 	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isEnabled() {
-		// TODO Auto-generated method stub
 		return true;
 	}
+
 
 }
