@@ -10,7 +10,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +26,7 @@ import com.example.demo.repository.UserRepo;
 import com.example.demo.security.JwtUtils;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/user")
 public class AuthController {
 	
 	@Autowired
@@ -37,20 +36,23 @@ public class AuthController {
 	private ModelMapper mapper;
 
 	@Autowired
-	  private JwtUtils jwtUtils;
-
+	private JwtUtils jwtUtils;
+	
 	@Autowired
-	private CustomUser userDetailsService;
+	private CustomUser customUser;
+
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
 
+//	login
+	
 	@PostMapping("/login")
 	public ResponseEntity<JwtAuthResponse> createToken(@RequestBody JwtAuthRequest request) throws Exception {
 		authenticate(request.getUsername(), request.getPassword());
-		UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
-		String token = jwtUtils.generateJwtToken(userDetails);
+		UserDetails userDetails = customUser.loadUserByUsername(request.getUsername());
+		String token = jwtUtils.generateToken(userDetails);
 
 		JwtAuthResponse response = new JwtAuthResponse();
 		response.setToken(token);
@@ -60,19 +62,21 @@ public class AuthController {
 
 	private void authenticate(String username, String password) throws Exception {
 
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,
+				password);
 		try {
 			authenticationManager.authenticate(authenticationToken);
-		}catch(BadCredentialsException e) {
-			System.out.println("Invalid Detials !!");
+		} catch (BadCredentialsException e) {
+//			System.out.println("Invalid Detials !!");
 			throw new UserException("Invalid username or password !!");
 		}
 
 	}
 
+
 	// get loggedin user data
 
-	@GetMapping("/currentUser")
+	@GetMapping("/currentuser")
 	public ResponseEntity<UserDTO> getUser(Principal principal) {
 		User user = this.userRepo.findByEmail(principal.getName());
 		return new ResponseEntity<UserDTO>(this.mapper.map(user, UserDTO.class), HttpStatus.OK);

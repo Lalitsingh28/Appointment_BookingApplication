@@ -18,9 +18,6 @@ public class BloggingAppBackendApplication implements CommandLineRunner{
 	public static void main(String[] args) {
 		SpringApplication.run(BloggingAppBackendApplication.class, args);
 	}
-
-	@Autowired
-	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
 	private RoleRepo roleRepo;
@@ -28,8 +25,6 @@ public class BloggingAppBackendApplication implements CommandLineRunner{
 	
 	@Override
 	public void run(String... args) throws Exception {
-
-		System.out.println(this.passwordEncoder.encode("xyz"));
 
 		try {
 
