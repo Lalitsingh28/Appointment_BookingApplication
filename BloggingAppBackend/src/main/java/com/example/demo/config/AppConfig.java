@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import com.example.demo.security.AuthEntry;
 import com.example.demo.security.AuthToken;
 
@@ -22,7 +23,6 @@ import com.example.demo.security.AuthToken;
 @Configuration
 @EnableWebSecurity
 public class AppConfig {
-	
 	
 	@Bean
     public ModelMapper modelMapper() {
@@ -50,12 +50,10 @@ public class AppConfig {
 	                csrf()
 	                .disable()
 	                .authorizeHttpRequests()
-	                .requestMatchers("/user/login","/user/register")
-	                .permitAll()
-	                .requestMatchers(HttpMethod.GET)
-	                .permitAll()
-	                .requestMatchers("/user/currentUser","/category/**").hasAuthority("ADMIN")
-	                .requestMatchers("/user/**","/post/**","/comment/**").hasAuthority("NORMAL")
+	                .requestMatchers(HttpMethod.GET).permitAll()
+	                .requestMatchers("/user/login","/user/register").permitAll()
+	                .requestMatchers("/user/currentUser","/category/**").hasAuthority("ROLE_ADMIN")
+	                .requestMatchers("/user/**","/post/**","/comment/**").hasAuthority("ROLE_NORMAL")
 	                .anyRequest()
 	                .authenticated()
 	                .and().exceptionHandling()

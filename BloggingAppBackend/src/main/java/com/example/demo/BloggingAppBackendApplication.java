@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.demo.config.AppConstant;
 import com.example.demo.entity.Role;
@@ -37,12 +36,7 @@ public class BloggingAppBackendApplication implements CommandLineRunner{
 			role1.setName("ROLE_NORMAL");
 
 			List<Role> roles = List.of(role, role1);
-
-			List<Role> result = roleRepo.saveAll(roles);
-
-			result.forEach(r -> {
-				System.out.println(r.getName());
-			});
+			roleRepo.saveAll(roles);
 
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -50,6 +44,5 @@ public class BloggingAppBackendApplication implements CommandLineRunner{
 		}
 
 	}
-	
 	
 }

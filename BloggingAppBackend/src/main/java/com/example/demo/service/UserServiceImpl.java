@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.config.AppConstant;
+import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
 import com.example.demo.exception.UserException;
 import com.example.demo.payload.UserDTO;
+import com.example.demo.repository.RoleRepo;
 import com.example.demo.repository.UserRepo;
 
 @Service
@@ -25,6 +28,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private RoleRepo roleRepo;
 
 	
 	public UserDTO userToDto(User user) {
@@ -36,6 +42,9 @@ public class UserServiceImpl implements UserService {
 	public UserDTO registerNewUser(User user) {
 
 		 user.setPassword(passwordEncoder.encode(user.getPassword()));
+		// roles
+		 Role role = roleRepo.findById(AppConstant.NORMAL_USER).get();
+		 user.getRoles().add(role);
 		 User savedUser = userRepo.save(user);
 		 UserDTO userDto = userToDto(savedUser);
 		 return userDto;
