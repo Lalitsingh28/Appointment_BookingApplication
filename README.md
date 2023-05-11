@@ -22,7 +22,6 @@
 
 ## Features
 
-
 ## Installation & Run
 
 * Before running the API server, you should update the database config inside the [application.properties](https://github.com/Lalitsingh28/Blogging_Application/tree/main/BloggingAppBackend/src/main/resources) file. 
