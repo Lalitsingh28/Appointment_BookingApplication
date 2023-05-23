@@ -19,6 +19,7 @@
 * User Module
 * Blog Module
 * Comment Module
+* Post Module
 
 ## Features
 
